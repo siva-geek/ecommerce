@@ -1,50 +1,61 @@
 <?php
-	include 'includes/session.php';
-	$conn = $pdo->open();
+// include 'includes/session.php';
+include 'includes/conn.php';
 
-	if(isset($_POST['login'])){
-		
-		$email = $_POST['email'];
-		$password = $_POST['password'];
+if (isset($_POST['login'])) {
+    if (isset($_POST['email']) && isset($_POST['password'])) {
 
-		try{
+        function validate($data)
+        {
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data);
+            return $data;
+        }
 
-			$stmt = $conn->prepare("SELECT *, COUNT(*) AS numrows FROM users WHERE email = :email");
-			$stmt->execute(['email'=>$email]);
-			$row = $stmt->fetch();
-			if($row['numrows'] > 0){
-				if($row['status']){
-					if(password_verify($password, $row['password'])){
-						if($row['type']){
-							$_SESSION['admin'] = $row['id'];
-						}
-						else{
-							$_SESSION['user'] = $row['id'];
-						}
-					}
-					else{
-						$_SESSION['error'] = 'Incorrect Password';
-					}
-				}
-				else{
-					$_SESSION['error'] = 'Account not activated.';
-				}
-			}
-			else{
-				$_SESSION['error'] = 'Email not found';
-			}
-		}
-		catch(PDOException $e){
-			echo "There is some problem in connection: " . $e->getMessage();
-		}
+        $email = validate($_POST['email']);
+        $pass = validate($_POST['password']);
 
-	}
-	else{
-		$_SESSION['error'] = 'Input login credentails first';
-	}
+        if (empty($email)) {
+            header("Location: index.php?error=User Name is required");
+            exit();
+        } else if (empty($pass)) {
+            header("Location: index.php?error=Password is required");
+            exit();
+        } else {
+            $sql = "SELECT * FROM users WHERE email='$email' AND password='$pass'";
 
-	$pdo->close();
+            $result = mysqli_query($conn, $sql);
 
-	header('location: login.php');
+            if (mysqli_num_rows($result) === 1) {
+                $row = mysqli_fetch_assoc($result);
+                // if ($row['user_name'] === $email && $row['password'] === $pass) {
+                // $_SESSION['user_name'] = $row['user_name'];
+                // $_SESSION['name'] = $row['name'];
+                // $_SESSION['id'] = $row['id'];
+                // $_SESSION['role'] = $row['role'];
 
-?>
+                //     if ($row['role'] == 'employer') {
+                //         header('Location: company-post-jobs.php');
+                //         exit();
+                //     } elseif ($row['role'] == 'candidate') {
+                //         header('Location: company-post-jobs.php');
+                //         exit();
+                //     }
+                // } else {
+                //     header("Location: index.php?error=Incorect User name or password");
+                //     exit();
+                // }
+            } else {
+                header("Location: index.php?error=Incorect User name or password");
+                exit();
+            }
+        }
+
+    } else {
+        header("Location: index.php");
+        exit();
+    }
+}
+
+header('location: index.php');
