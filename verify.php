@@ -1,6 +1,7 @@
 <?php
-// include 'includes/session.php';
-include 'includes/conn.php';
+
+session_start();
+include "db_conn.php";
 
 if (isset($_POST['login'])) {
     if (isset($_POST['email']) && isset($_POST['password'])) {
@@ -28,24 +29,25 @@ if (isset($_POST['login'])) {
             $result = mysqli_query($conn, $sql);
 
             if (mysqli_num_rows($result) === 1) {
+                // die('hello');
                 $row = mysqli_fetch_assoc($result);
-                // if ($row['user_name'] === $email && $row['password'] === $pass) {
-                // $_SESSION['user_name'] = $row['user_name'];
-                // $_SESSION['name'] = $row['name'];
-                // $_SESSION['id'] = $row['id'];
-                // $_SESSION['role'] = $row['role'];
+                if ($row['email'] === $email && $row['password'] === $pass) {
+                    $_SESSION['user_name'] = $row['user_name'];
+                    $_SESSION['name'] = $row['name'];
+                    $_SESSION['id'] = $row['id'];
+                    $_SESSION['role'] = $row['role'];
 
-                //     if ($row['role'] == 'employer') {
-                //         header('Location: company-post-jobs.php');
-                //         exit();
-                //     } elseif ($row['role'] == 'candidate') {
-                //         header('Location: company-post-jobs.php');
-                //         exit();
-                //     }
-                // } else {
-                //     header("Location: index.php?error=Incorect User name or password");
-                //     exit();
-                // }
+                    if ($row['role'] == 'saller') {
+                        header('Location: admin/dashboard.php');
+                        exit();
+                    } elseif ($row['role'] == 'candidate') {
+                        header('Location: company-post-jobs.php');
+                        exit();
+                    }
+                } else {
+                    header("Location: index.php?error=Incorect User name or password");
+                    exit();
+                }
             } else {
                 header("Location: index.php?error=Incorect User name or password");
                 exit();
@@ -57,5 +59,3 @@ if (isset($_POST['login'])) {
         exit();
     }
 }
-
-header('location: index.php');

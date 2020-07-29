@@ -1,9 +1,5 @@
-<?php include 'includes/session.php';?>
-<?php?>
 <!DOCTYPE html>
 <html lang="en">
-
-<!-- Mirrored from live.hasthemes.com/html/5/ecolife-preview/ecolife/index-20.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 07 Jul 2020 08:58:36 GMT -->
 
 <head>
     <meta charset="UTF-8" />
@@ -1854,8 +1850,9 @@ if (isset($_SESSION['success'])) {
                 <span class="psw">Forgot <a href="#">password?</a></span>
                 <input type="password" placeholder="Enter Password" name="password" required>
                 <br /><br />
-                <button type="submit" class="loginbutn">Login</button> <input type="checkbox" checked="checked"
-                    name="remember"> Remember me
+                <!-- <button type="submit" class="loginbutn">Login</button> -->
+                <input type="submit" class="loginbutn" name="login" value="Login">
+                <input type="checkbox" checked="checked" name="remember"> Remember me
                 <label>
 
                 </label>
